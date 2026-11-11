@@ -15,3 +15,4 @@ env/
 # OS / editor
 .DS_Store
 .vscode/
+models/
