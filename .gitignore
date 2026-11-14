@@ -16,3 +16,7 @@ env/
 .DS_Store
 .vscode/
 models/
+
+
+!sample_data/
+!sample_data/kickstarter_sample.csv

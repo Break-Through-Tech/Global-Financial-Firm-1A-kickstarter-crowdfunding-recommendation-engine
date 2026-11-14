@@ -77,6 +77,33 @@ This project uses the Kickstarter Projects dataset from Kaggle.
 data/
 └── DSI_kickstarterscrape_dataset.csv
 ```
+### 4A. Sample Dataset
+
+A sample dataset containing 500 processed U.S.-based Kickstarter campaign records is included in the [`sample_data/`](sample_data/) directory.
+
+The sample contains both successful and failed campaigns and retains the 17 columns used in the processed dataset. It allows users to explore the dataset structure, inspect campaign characteristics, and test data-loading workflows without downloading the full dataset.
+
+**Dataset:** [`kickstarter_sample.csv`](sample_data/kickstarter_sample.csv)
+
+#### Loading the Sample Dataset
+
+You can load the sample dataset using pandas:
+
+```python
+import pandas as pd
+
+# Load the sample dataset
+df = pd.read_csv("sample_data/kickstarter_sample.csv")
+
+# Preview the first five records
+print(df.head())
+
+# Check the dataset dimensions
+print(df.shape)
+
+# View the distribution of campaign outcomes
+print(df["status"].value_counts())
+```
 
 The `data/` folder is excluded from version control, so each team member keeps their own copy.
 
