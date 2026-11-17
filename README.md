@@ -1,11 +1,11 @@
 # Kickstarter Crowdfunding Recommendation Engine
 
-A Break Through Tech AI Studio challenge project (Fall 2026). We predict whether a Kickstarter campaign will succeed or fail from its campaign characteristics, explain what drives those predictions, and prototype recommendations for campaigns that look at risk.
+A Fall 2026 Break Through Tech AI Studio challenge project developed for a global financial firm. Our team predicts whether a Kickstarter campaign will succeed or fail based on campaign characteristics, explains the factors driving those predictions, and prototypes recommendations for campaigns that appear at risk.
 
 ### 👥 **Team Members**
 | Name             | GitHub Handle | Contribution                                                                                                                                                                  |
 |------------------|---------------|-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Abigail Galung   | @bazzazy14    | Handle missing values; model preparation and Logistic Regression baseline; feature-selection experiments                                                                       |
+| Abigail Galung   | @bazzazy14    | Handle missing values; campaign duration and category/subcategory EDA; model preparation and preprocessing; Logistic Regression baseline; feature-selection experiments                                                                       |
 | Ryan Amador      | @RyOnFire     | Acquire, load and filter the dataset; goal and engagement EDA; XGBoost and LightGBM models; final model comparison and selection; recommendation prototype; dependencies        |
 | Zainab Akhtar    | @Zainu04      | Prepare U.S.-based campaign records; KNN model; model performance comparison                                                                                                   |
 | Nanshu Singla    | @Nanshusingla | Encode and prepare categorical variables; correlation and EDA summary; Random Forest model; SHAP interpretability analysis                                                    |
