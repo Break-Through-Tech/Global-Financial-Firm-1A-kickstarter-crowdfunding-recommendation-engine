@@ -142,7 +142,7 @@ Then open the notebook you want to run from the `notebooks/` directory.
 |-----------|-----------|
 | 1. Data preparation | `03_handle_missing_values`, `task_4_us_campaign_records`, `05_categorical_variable_preparation` |
 | 2. Exploratory analysis | `06_goal_vs_success_analysis`, `milestone2_task2_duration_analysis`, `milestone2_task3_engagement_analysis`, `milestone2_task4_categorical_analysis`, `milestone2_task5_location_analysis`, `milestone2_task6_reward_levels_analysis_completed`, `milestone2_task7_correlation_summary` |
-| 3. Machine learning | `milestone3_task1_model_preparation`, `milestone3_feature_selection_experiments`, `milestone3_task2_logistic_regression`, `milestone3_task3_random_forest`, `milestone3_task4_knn_analysis`, `milestone3_task5_xgboost`, `milestone3_task6_model_comparison`, `milestone3_task7_shap_analysis`, `milestone3_task8_final_model_selection` |
+| 3. Machine learning | `milestone3_task1_model_preparation`, `milestone3_feature_selection_experiments`, `milestone3_task2_logistic_regression`, `milestone3_task3_random_forest`, `milestone3_task4_knn_analysis`, `milestone3_task5_xgboost`, `milestone3_task6_model_comparison`, `milestone3_task7_shap_analysis`, `milestone3_task7b_shap_final_xgboost`, `milestone3_task8_final_model_selection` |
 | 3. With-`updates` reruns | `milestone3_task3_random_forest_with_updates`, `milestone3_task4_knn_analysis_with_updates`, `milestone3_task5_xgboost_with_updates` |
 | 4. Recommendation prototype | `milestone4_recommendation_prototype` |
 
@@ -222,7 +222,7 @@ Test-set results for the tuned models, with and without the `updates` feature:
 - **XGBoost, LightGBM and Random Forest are effectively tied** at the top (differences of about 0.001-0.006 ROC-AUC are within noise). XGBoost was selected for the highest or tied-highest ROC-AUC in both settings.
 - **Tuning helped only slightly** (about +0.005 ROC-AUC), and a second wider search added nothing, so performance is limited by the available features, not the settings.
 - **Failed campaigns are harder to catch.** Even with `updates`, the best models identify about 78% of failed campaigns (about 59% without it).
-- **Explainability (SHAP):** in the Logistic Regression analysis (`milestone3_task7_shap_analysis`), `updates` had the largest influence on predictions, followed by funding goal and campaign duration. On the final tuned XGBoost model used in the Streamlit app, the ranking is `updates`, funding goal, then category (computed in `scripts/export_artifacts.py`); without `updates`, funding goal and reward levels lead. Repeating the SHAP notebook on the final XGBoost model is listed under Next Steps.
+- **Explainability (SHAP):** `milestone3_task7_shap_analysis` explains Logistic Regression: `updates` had the largest influence, followed by funding goal and campaign duration. `milestone3_task7b_shap_final_xgboost` repeats the analysis on the final tuned XGBoost model, with and without `updates` (the same models used in the Streamlit app). On the XGBoost model the ranking is `updates`, funding goal, then category; without `updates`, funding goal and reward levels lead.
 - **Recommendation prototype:** `milestone4_recommendation_prototype` produces two recommendations for a campaign predicted to fail: one from a model without `updates`, and one from a model that uses `updates` as context. Both suggest changes to funding goal, campaign length and reward levels. Updates are deliberately not recommended as something to "do more of," because they are more likely a result of success than a cause.
 
 ---
@@ -239,7 +239,7 @@ Test-set results for the tuned models, with and without the `updates` feature:
 **With more time we would**
 
 - Tune the decision threshold or use class weights to catch more failed campaigns.
-- Repeat the SHAP analysis on the final XGBoost model.
+- Extend the final-model SHAP analysis (`milestone3_task7b_shap_final_xgboost`) with repeated cross-validation to check the ranking is stable.
 - Use repeated cross-validation for a finer model ranking.
 - Calibrate predicted probabilities further and wrap the recommendation function in a small web demo.
 - Explore additional features, such as campaign text.
