@@ -195,7 +195,7 @@ Test-set results for the tuned models, with and without the `updates` feature:
 - **XGBoost, LightGBM and Random Forest are effectively tied** at the top (differences of about 0.001-0.006 ROC-AUC are within noise). XGBoost was selected for the highest or tied-highest ROC-AUC in both settings.
 - **Tuning helped only slightly** (about +0.005 ROC-AUC), and a second wider search added nothing, so performance is limited by the available features, not the settings.
 - **Failed campaigns are harder to catch.** Even with `updates`, the best models identify about 78% of failed campaigns (about 59% without it).
-- **Explainability (SHAP):** in the Logistic Regression analysis, `updates` had the largest influence on predictions, followed by funding goal and campaign duration.
+- **Explainability (SHAP):** in the Logistic Regression analysis (`milestone3_task7_shap_analysis`), `updates` had the largest influence on predictions, followed by funding goal and campaign duration. On the final tuned XGBoost model used in the Streamlit app, the ranking is `updates`, funding goal, then category (computed in `scripts/export_artifacts.py`); without `updates`, funding goal and reward levels lead. Repeating the SHAP notebook on the final XGBoost model is listed under Next Steps.
 - **Recommendation prototype:** `milestone4_recommendation_prototype` produces two recommendations for a campaign predicted to fail: one from a model without `updates`, and one from a model that uses `updates` as context. Both suggest changes to funding goal, campaign length and reward levels. Updates are deliberately not recommended as something to "do more of," because they are more likely a result of success than a cause.
 
 ---
