@@ -1,4 +1,4 @@
-# Kickstarter Crowdfunding Recommendation Engine
+# Kickstarter Crowdfunding Recommendation Engine - Global Financial Firm
 
 A Fall 2026 Break Through Tech AI Studio challenge project developed for a global financial firm. Our team predicts whether a Kickstarter campaign will succeed or fail based on campaign characteristics, explains the factors driving those predictions, and prototypes recommendations for campaigns that appear at risk.
 
@@ -154,6 +154,8 @@ This project is part of the **Break Through Tech AI Studio** program. From Augus
 
 An effective recommendation engine could help creators set more realistic goals, choose a better campaign length, and understand which characteristics are associated with successful campaigns.
 
+More broadly, the project demonstrates how historical data and machine learning can support **financial decision-making under uncertainty**. By estimating the likelihood of campaign success and identifying factors associated with stronger outcomes, the system provides a structured, data-driven way to evaluate decisions involving funding targets, timing, and campaign strategy. This predictive and recommendation-based approach is relevant to a **global financial firm** because it illustrates how data can be transformed into interpretable insights that support more informed financial decisions.
+
 ---
 
 ## 📊 **Data Exploration**
@@ -169,6 +171,16 @@ An effective recommendation engine could help creators set more realistic goals,
 - **Updates and comments:** Successful campaigns had a median of 5 updates versus 0 for failed campaigns. `updates` had the strongest correlation with success (Pearson 0.39, Spearman 0.55).
 - **Reward levels:** Success rose with the number of reward levels, from about 28% for campaigns with 1 level to about 58% for 10 levels.
 - **Category and location:** Dance (76%), Theater (70%) and Music (68%) had the highest category success rates; Fashion (33%) had the lowest. Some cities, such as Brooklyn (about 72%), showed higher success rates than others.
+
+### EDA Visualizations
+
+#### Campaign Duration vs. Success Rate
+![Campaign duration vs. success rate](assets/duration_success_rate.png)
+**Key takeaway:** Campaigns lasting 45 days or less had success rates of about 58%, while success declined to about 47% for campaigns lasting 45–60 days and 43% for campaigns longer than 60 days. This suggests that longer campaign durations were associated with lower historical success rates.
+
+#### Campaign Category vs. Success Rate
+![Campaign category vs. success rate](assets/category_success_rate.png)
+**Key takeaway:** Success rates varied substantially across campaign categories. Dance (~76%), Theater (~70%), and Music (~68%) had some of the highest success rates, while Fashion was considerably lower at about 33%. This suggests that campaign category contains useful predictive information about historical outcomes.
 
 **Challenges and assumptions**
 
@@ -189,6 +201,32 @@ An effective recommendation engine could help creators set more realistic goals,
 - **Tuning:** hyperparameters were selected with 5-fold cross-validated ROC-AUC on the training data only (`GridSearchCV` or randomized search). The test set was used once per final model.
 - **Feature experiments:** adding `city` improved accuracy by only about 0.5 points while multiplying the feature count from 119 to about 2,900, so it was not used. Adding `updates` improved accuracy by about 11.6 points.
 - **Final model:** XGBoost with `learning_rate=0.1`, `max_depth=3`, `n_estimators=400`.
+
+### Why These Models?
+We compared several classification approaches to understand both predictive performance and model tradeoffs:
+
+- **Logistic Regression** was used as an interpretable baseline because it provides a simple reference point for evaluating whether more complex models meaningfully improve performance.
+- **Random Forest** was included to capture nonlinear relationships and interactions between campaign features that a linear model may miss.
+- **K-Nearest Neighbors (KNN)** provided a distance-based benchmark and allowed us to compare a fundamentally different classification approach using the same processed feature set.
+- **XGBoost and LightGBM** were evaluated as gradient-boosted tree models because they are well suited to structured tabular data and can capture complex feature relationships while providing strong predictive performance.
+- **SHAP** was used for model interpretability to examine which features contributed most strongly to predictions.
+
+All models were evaluated on the same stratified train/test split and compared using accuracy, precision, recall, F1 score, and ROC-AUC. Hyperparameter tuning was performed on the training data using cross-validation so that the test set could remain an independent evaluation of final model performance.
+
+---
+## 💻 Code Highlights
+
+| File / Function | Purpose |
+|---|---|
+| `scripts/filter_campaigns.py` | Filters the raw Kickstarter dataset to the two target outcomes, **successful** and **failed**, and saves the filtered dataset used in later preprocessing steps. |
+| `notebooks/milestone3_task1_model_preparation.ipynb` | Prepares the modeling features and shared train/test split, including numeric scaling and one-hot encoding of categorical variables. |
+| `notebooks/milestone3_feature_selection_experiments.ipynb` | Compares alternative feature sets, including experiments with `city` and `updates`, to evaluate predictive improvement against added model complexity. |
+| `notebooks/milestone3_task6_model_comparison.ipynb` | Compares the classification models using common evaluation metrics and supports final model selection. |
+| `scripts/export_artifacts.py` | Recreates the two final XGBoost pipelines using the same preprocessing and train/test split, then exports the trained models and lookup data used by the Streamlit application. |
+| `app/recommender.py` — `recommend_campaign()` | Loads the exported models, predicts campaign success risk, compares campaigns with successful peers, and generates ranked recommendations for controllable features such as goal, duration, and reward levels. |
+| `app/streamlit_app.py` | Provides the user-facing interface for entering campaign characteristics and viewing predicted success probabilities, risk levels, peer comparisons, and recommendations. |
+
+The recommendation system intentionally provides two model views: **Plan A without `updates`** and **Plan B with `updates`**, allowing users to compare predictions while acknowledging the potential timing and leakage concerns associated with that feature.
 
 ---
 
@@ -220,7 +258,7 @@ Test-set results for the tuned models, with and without the `updates` feature:
 
 - **`updates` matters more than the algorithm.** It adds about 11-12 accuracy points to every model. An earlier comparison that gave `updates` only to Logistic Regression made it look best; on equal features, the tree-based models lead.
 - **XGBoost, LightGBM and Random Forest are effectively tied** at the top (differences of about 0.001-0.006 ROC-AUC are within noise). XGBoost was selected for the highest or tied-highest ROC-AUC in both settings.
-- **Tuning helped only slightly** (about +0.005 ROC-AUC), and a second wider search added nothing, so performance is limited by the available features, not the settings.
+- **Tuning helped only slightly** (about +0.005 ROC-AUC), and a second wider search produced no meaningful improvement, suggesting performance was more constrained by the available features than by further hyperparameter tuning.
 - **Failed campaigns are harder to catch.** Even with `updates`, the best models identify about 78% of failed campaigns (about 59% without it).
 - **Explainability (SHAP):** `milestone3_task7_shap_analysis` explains Logistic Regression: `updates` had the largest influence, followed by funding goal and campaign duration. `milestone3_task7b_shap_final_xgboost` repeats the analysis on the final tuned XGBoost model, with and without `updates` (the same models used in the Streamlit app). On the XGBoost model the ranking is `updates`, funding goal, then category; without `updates`, funding goal and reward levels lead.
 - **Recommendation prototype:** `milestone4_recommendation_prototype` produces two recommendations for a campaign predicted to fail: one from a model without `updates`, and one from a model that uses `updates` as context. Both suggest changes to funding goal, campaign length and reward levels. Updates are deliberately not recommended as something to "do more of," because they are more likely a result of success than a cause.
@@ -241,14 +279,14 @@ Test-set results for the tuned models, with and without the `updates` feature:
 - Tune the decision threshold or use class weights to catch more failed campaigns.
 - Extend the final-model SHAP analysis (`milestone3_task7b_shap_final_xgboost`) with repeated cross-validation to check the ranking is stable.
 - Use repeated cross-validation for a finer model ranking.
-- Calibrate predicted probabilities further and wrap the recommendation function in a small web demo.
+- Further develop and deploy the Streamlit application for broader user testing.
 - Explore additional features, such as campaign text.
 
 ---
 
 ## 📝 **License**
 
-License to be confirmed with our Challenge Advisor.
+This project is licensed under the [MIT License](LICENSE).
 
 ---
 
